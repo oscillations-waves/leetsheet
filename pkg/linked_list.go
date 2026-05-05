@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import "fmt"
 
@@ -14,7 +14,6 @@ type LinkedList struct {
 func (l *LinkedList) InsertFront(value int) {
 	newNode := &Node{Value: value, Next: l.Head}
 	l.Head = newNode
-
 }
 
 func (l *LinkedList) InsertBack(value int) {
@@ -22,6 +21,7 @@ func (l *LinkedList) InsertBack(value int) {
 
 	if l.Head == nil {
 		l.Head = newNode
+		return
 	}
 	current := l.Head
 	for current.Next != nil {
@@ -32,6 +32,10 @@ func (l *LinkedList) InsertBack(value int) {
 
 func (l *LinkedList) Delete(value int) {
 	if l.Head == nil {
+		return
+	}
+	if l.Head.Value == value {
+		l.Head = l.Head.Next
 		return
 	}
 	current := l.Head
@@ -46,21 +50,24 @@ func (l *LinkedList) Delete(value int) {
 func (l *LinkedList) Print() {
 	current := l.Head
 	for current != nil {
-		fmt.Println("%d ->", current.Value)
+		fmt.Printf("%d -> ", current.Value)
 		current = current.Next
 	}
 	fmt.Println("nil")
 }
 
-func main() {
+func RunLinkedList() {
+	fmt.Println("\n=== Linked List ===")
 	list := &LinkedList{}
 	list.InsertFront(3)
 	list.InsertFront(2)
 	list.InsertFront(1)
 	list.InsertBack(4)
 
-	list.Print() // 1 -> 2 -> 3 -> 4 -> nil
+	fmt.Print("List after insertions: ")
+	list.Print()
 
 	list.Delete(2)
-	list.Print() // 1 -> 3 -> 4 -> nil
+	fmt.Print("List after deleting 2: ")
+	list.Print()
 }

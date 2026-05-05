@@ -1,32 +1,29 @@
-package main
+package pkg
 
 import "fmt"
 
-func binaryGap(n int) int {
+func BinaryGap(n int) int {
 	maxGap, currentGap := 0, 0
 	foundOne := false
-	for n>0{
-		if n%2 ==1{
+	for n > 0 {
+		if n%2 == 1 {
 			if foundOne && currentGap > maxGap {
 				maxGap = currentGap
 			}
-			foundOne =true
+			foundOne = true
 			currentGap = 0
-
-		}else{
-			if foundOne{
+		} else {
+			if foundOne {
 				currentGap++
 			}
-
 		}
-		n = n/2
-
+		n = n / 2
 	}
 	return maxGap
-
 }
 
-func main() {
+func RunBinaryGap() {
+	fmt.Println("\n=== Binary Gap ===")
 	testCases := []struct {
 		input    int
 		expected int
@@ -42,11 +39,8 @@ func main() {
 		{1041, 5},   // binary: 10000010001, longest gap is 5
 	}
 
-	fmt.Println("Binary Gap Solutions:")
-	fmt.Println("---------------------")
-
 	for _, tc := range testCases {
-		result := binaryGap(tc.input)
+		result := BinaryGap(tc.input)
 		status := "✓"
 		if result != tc.expected {
 			status = "✗"
