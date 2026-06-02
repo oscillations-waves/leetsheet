@@ -38,6 +38,8 @@ func main() {
 		pkg.RunSubarraySumK()
 	case "two-sum":
 		pkg.RunTwoSum()
+	case "rate-limiter":
+		pkg.RunRateLimiter()
 	case "worker-pool":
 		pkg.RunWorkerPool()
 	case "zigzag":
@@ -68,6 +70,7 @@ func printHelp() {
 	fmt.Println("  subarray-sum-k             - Find subarrays with sum equal to k")
 	fmt.Println("  two-sum                    - Find two numbers in array that add to target")
 	fmt.Println("  worker-pool                - Concurrent worker pool example")
+	fmt.Println("  rate-limiter               - Rate limiter: Token Bucket, Fixed Window, Sliding Window")
 	fmt.Println("  zigzag                     - Zigzag conversion of string")
 	fmt.Println("\nExamples:")
 	fmt.Println("  go run ./cmd -problem=two-sum")
