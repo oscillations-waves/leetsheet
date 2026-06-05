@@ -66,6 +66,7 @@ package apigateway
 //    - AUTH FAIL:   sudden spike in 401/403 → security alert
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"log/slog"
@@ -210,8 +211,7 @@ func (o *ObservabilityMiddleware) Middleware(next http.Handler) http.Handler {
 		if traceID == "" {
 			traceID = generateTraceID()
 		}
-		ctx := r.Context()
-		ctx = withValue(ctx, ctxTraceID, traceID)
+		ctx := context.WithValue(r.Context(), ctxTraceID, traceID)
 
 		// 2. Expose trace ID to caller so they can correlate their logs.
 		w.Header().Set("X-Trace-Id", traceID)
@@ -249,22 +249,6 @@ func (o *ObservabilityMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// withValue is a thin alias to avoid importing context in this file.
-func withValue(ctx interface{ Value(any) any }, key, val any) interface{ Value(any) any } {
-	// We use the real context package — this is just a type alias workaround
-	// to keep the file self-contained. In the real code we use context directly.
-	return contextWithValue(ctx, key, val)
-}
-
-// contextWithValue wraps the standard context.WithValue.
-// Separated here so the import is localised.
-func contextWithValue(parent interface{ Value(any) any }, key, val any) interface{ Value(any) any } {
-	// This function exists only to make the type signatures work without
-	// importing context again at the top. In practice, you'd just call
-	// context.WithValue() directly.
-	panic("replace with context.WithValue in real code — see gateway.go for usage pattern")
-}
-
 // remoteIP extracts the real client IP, respecting common proxy headers.
 // Security note: trust X-Forwarded-For ONLY if your load balancer sets it.
 // Never use it raw from untrusted clients — it is trivially spoofable.
@@ -272,15 +256,15 @@ func remoteIP(r *http.Request) string {
 	// Only safe if your LB is the only entity that sets this header.
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 		// XFF can be comma-separated; leftmost is the original client.
-		parts := splitFirst(xff, ',')
+		parts := splitFirst(xff, ",")
 		return trimSpace(parts)
 	}
 	return r.RemoteAddr
 }
 
 func splitFirst(s, sep string) string {
-	for i, c := range s {
-		if string(c) == sep {
+	for i := range s {
+		if s[i:i+1] == sep {
 			return s[:i]
 		}
 	}

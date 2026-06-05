@@ -1,4 +1,3 @@
-package apigateway
 // Package apigateway teaches multi-tenant SaaS API gateway design.
 //
 // Architecture: each inbound HTTP request flows through a middleware chain:

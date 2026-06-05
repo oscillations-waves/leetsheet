@@ -19,15 +19,36 @@ import "strings"
 // "******************"
 
 func formatNewspaper(paragraphs [][]string, width int) []string {
-	result := make([]string, 0, len(paragraphs)+2)
-	result = append(result, strings.Repeat("*", width+2))
+	border := strings.Repeat("*", width+2)
+	result := []string{border}
 
-	for i, para := range paragraphs {
-		lineLen := len(para[i])
-		// if lineLen == width {
-		// 	continue
-		// }
+	for _, para := range paragraphs {
+		// Word-wrap words in this paragraph to fit within width.
+		var lines []string
+		current := ""
+		for _, word := range para {
+			switch {
+			case current == "":
+				current = word
+			case len(current)+1+len(word) <= width:
+				current += " " + word
+			default:
+				lines = append(lines, current)
+				current = word
+			}
+		}
+		if current != "" {
+			lines = append(lines, current)
+		}
 
+		// Center each wrapped line and surround with * borders.
+		for _, line := range lines {
+			leftover := width - len(line)
+			leading := leftover / 2
+			trailing := leftover - leading
+			result = append(result, "*"+strings.Repeat(" ", leading)+line+strings.Repeat(" ", trailing)+"*")
+		}
 	}
-	return
+
+	return append(result, border)
 }
