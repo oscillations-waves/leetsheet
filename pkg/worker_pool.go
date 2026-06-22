@@ -46,8 +46,9 @@ func (wp *WorkerPool) worker(id int) {
 				WorkerId: id,
 				Err:      errors.New("input cannot be negative"),
 			}
+			continue
 		}
-		output := job.Id * job.Id
+		output := job.Input * job.Input
 
 		wp.results <- Result{
 			JobId:    job.Id,
