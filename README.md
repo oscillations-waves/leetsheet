@@ -39,34 +39,6 @@ system-design/          # Full system design implementations
 
 ---
 
-## `pkg/pubsub.go` — Pub-Sub Broker
-
-A thread-safe, in-process publish-subscribe message broker.
-
-**Key design properties:**
-- Multiple concurrent publishers via `sync.RWMutex` — readers share, writers exclude
-- Per-subscriber buffered channels act as isolated mailboxes
-- Non-blocking fan-out (`select/default`) — slow subscribers drop messages, never stall publishers
-- Lock is released *before* channel I/O to prevent deadlocks
-- O(1) unsubscribe via swap-with-last
-
-```go
-broker := pkg.NewPubSub(64)
-
-ch := broker.Subscribe("orders")
-go func() {
-    for msg := range ch {
-        fmt.Println(msg.Payload)
-    }
-}()
-
-broker.Publish("orders", "order-123")
-broker.Unsubscribe("orders", ch)
-broker.Close()
-```
-
----
-
 ## `pkg/worker_pool.go` — Worker Pool
 
 A bounded concurrency worker pool with job queuing and result collection.
@@ -86,6 +58,14 @@ for r := range pool.Results() {
 ## `pkg/rate_limiter.go` — Token Bucket Rate Limiter
 
 Thread-safe token bucket with configurable capacity and refill rate.
+
+---
+
+## `system-design/pub-sub/` — Publish-Subscribe System
+
+A thread-safe, in-process pub-sub broker with full system design documentation covering HLD, data flow diagrams, LLD, concurrency model, and scalability considerations.
+
+See [`system-design/pub-sub/README.md`](system-design/pub-sub/README.md) for the full design document.
 
 ---
 
